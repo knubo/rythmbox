@@ -1,6 +1,9 @@
 var drum = new Pz.Sound('../samples/Cymatics100kKick2DSharp.wav');
 
 var reverb;
+var currentTick = 1;
+
+var interval = setInterval(changeTicker, 1000); // Time in milliseconds
 
 function playSound() {
 
@@ -28,3 +31,26 @@ function playSound() {
     }
 }
 
+function setSpeed() {
+    clearInterval(interval);
+
+    let delay = $("#speed").val();
+
+    interval = setInterval(changeTicker, delay ? delay : 1000); // Time in milliseconds
+
+}
+
+function changeTicker() {
+    $('#led'+currentTick).removeClass("led-red");
+
+    currentTick++;
+
+    if(currentTick > 16) {
+        currentTick = 1;
+    }
+
+  //  drum.play();
+
+    $('#led'+currentTick).addClass("led-red");
+
+}
