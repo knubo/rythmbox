@@ -11,6 +11,10 @@ var interval = setInterval(changeTicker, 1000); // Time in milliseconds
 
 var addedSounds = {};
 
+function clearAll() {
+    addedSounds = {};
+}
+
 function playSound(doAdd) {
     drum.stop();
 
