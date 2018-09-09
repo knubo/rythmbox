@@ -1,5 +1,7 @@
 var currentSound = '../samples/Cymatics100kKick2DSharp.wav';
-var drum = new Pz.Sound(currentSound);
+var drum = new Pz.Sound(currentSound, function() {
+    $("#soundLoaded").html("...ready");
+});
 
 var reverb;
 var currentTick = 1;
@@ -9,6 +11,7 @@ var interval = setInterval(changeTicker, 1000); // Time in milliseconds
 var addedSounds = {};
 
 function playSound(doAdd) {
+    drum.stop();
 
     let transpose = $('#transpose').val();
     let sustain = $('#sustain').val();
@@ -61,7 +64,19 @@ function addSound() {
         addedSounds[currentTick] = [];
     }
 
-    addedSounds[currentTick].push({"sound": sound, "transpose": parseFloat(transpose)});
+    addedSounds[currentTick].push({"sound": sound, "file":currentSound, "transpose": parseFloat(transpose)});
+}
+
+function clearSound() {
+    if(!addedSounds[currentTick]) {
+        return;
+    }
+
+    addedSounds[currentTick] = addedSounds[currentTick].filter(function (o) {
+        return o.file != currentSound;
+    });
+
+    console.debug("Sounds now:"+addedSounds[currentTick]);
 }
 
 function setSpeed() {
@@ -77,8 +92,12 @@ function setSpeed() {
 }
 
 function switchSound() {
+    $("#soundLoaded").html("loading");
+
     currentSound = $('#soundSelect').val();
-    drum = new Pz.Sound(currentSound);
+    drum = new Pz.Sound(currentSound, function() {
+        $("#soundLoaded").html("...ready");
+    });
 }
 
 function changeTicker() {

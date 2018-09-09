@@ -15,12 +15,14 @@ Sounds:
 <select id="soundSelect">
     <option value="../samples/Cymatics100kKick2DSharp.wav">Kick</option>
     <option value="../samples/Cymatics - 100k Hihat 1.wav">Hihat</option>
+    <option value="../samples/Cymatics - 100k Snap 2.wav">Snap</option>
 </select>
-<input type="button" id="switchSound" value="Switch" onclick="switchSound()"><br/>
+<input type="button" id="switchSound" value="Switch" onclick="switchSound()"><span style="font-size:smaller" id="soundLoaded"></span><br/>
 
 Transpose (0.1-3): <input id="transpose"> Sustain (0.1-)<input id="sustain">
 <input type="button" value="Test" onclick="playSound(false)">
 <input type="button" value="Add" onclick="playSound(true)">
+<input type="button" value="Clear" onclick="clearSound()">
 
 <div class="container">
     <div class="led-box" >
