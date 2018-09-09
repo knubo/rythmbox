@@ -3,6 +3,7 @@ var drum = new Pz.Sound(currentSound, function() {
     $("#soundLoaded").html("...ready");
 });
 
+var lastCalc = new Date().getTime();
 var reverb;
 var currentTick = 1;
 
@@ -89,6 +90,25 @@ function setSpeed() {
     if(delay > 0) {
         interval = setInterval(changeTicker, delay ? delay : 1000); // Time in milliseconds
     }
+}
+
+function delayCalc() {
+    var now = new Date().getTime();
+
+    var newVal = now - lastCalc;
+
+    $("#speed").val(newVal);
+    lastCalc = now;
+}
+
+function zeroTickCount() {
+    currentTick = 0;
+    for(let i = 1; i <= 16; i++) {
+        $('#led' + i).removeClass("led-red");
+    }
+    setSpeed();
+    changeTicker();
+
 }
 
 function switchSound() {
