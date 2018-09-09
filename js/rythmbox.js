@@ -1,16 +1,19 @@
-var drum = new Pz.Sound('../samples/Cymatics100kKick2DSharp.wav');
+var currentSound = '../samples/Cymatics100kKick2DSharp.wav';
+var drum = new Pz.Sound(currentSound);
 
 var reverb;
 var currentTick = 1;
 
 var interval = setInterval(changeTicker, 1000); // Time in milliseconds
 
-function playSound() {
+var addedSounds = {};
+
+function playSound(doAdd) {
 
     let transpose = $('#transpose').val();
     let sustain = $('#sustain').val();
 
-    if(reverb) {
+    if (reverb) {
         drum.removeEffect(reverb);
     }
 
@@ -26,31 +29,75 @@ function playSound() {
 
     drum.play();
 
-    if(transpose) {
+    if (transpose) {
         drum.sourceNode.playbackRate.value = parseFloat(transpose); // try something between 0.25 and 3
     }
+
+    if (doAdd) {
+        addSound();
+    }
+}
+
+function addSound() {
+    let transpose = $('#transpose').val();
+    let sustain = $('#sustain').val();
+
+    var sound = new Pz.Sound(currentSound);
+    if (sustain) {
+        reverb = new Pizzicato.Effects.Reverb({
+            time: parseFloat(sustain),
+            decay: 0.01,
+            reverse: false,
+            mix: 0.5
+        });
+        sound.addEffect(reverb);
+    }
+
+    if (!transpose) {
+        transpose = 1;
+    }
+
+    if (!addedSounds[currentTick]) {
+        addedSounds[currentTick] = [];
+    }
+
+    addedSounds[currentTick].push({"sound": sound, "transpose": parseFloat(transpose)});
 }
 
 function setSpeed() {
-    clearInterval(interval);
+    if(interval) {
+        clearInterval(interval);
+    }
 
     let delay = $("#speed").val();
 
-    interval = setInterval(changeTicker, delay ? delay : 1000); // Time in milliseconds
+    if(delay > 0) {
+        interval = setInterval(changeTicker, delay ? delay : 1000); // Time in milliseconds
+    }
+}
 
+function switchSound() {
+    currentSound = $('#soundSelect').val();
+    drum = new Pz.Sound(currentSound);
 }
 
 function changeTicker() {
-    $('#led'+currentTick).removeClass("led-red");
+    $('#led' + currentTick).removeClass("led-red");
 
     currentTick++;
 
-    if(currentTick > 16) {
+    if (currentTick > 16) {
         currentTick = 1;
     }
 
-  //  drum.play();
+    //  drum.play();
 
-    $('#led'+currentTick).addClass("led-red");
+    $('#led' + currentTick).addClass("led-red");
 
+    if (addedSounds[currentTick]) {
+        addedSounds[currentTick].forEach(function (o) {
+            o.sound.play();
+            o.sound.sourceNode.playbackRate.value = o.transpose;
+        });
+    }
 }
